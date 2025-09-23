@@ -114,7 +114,7 @@ class SoccerWaveFunctionalTest(LiveServerTestCase):
         wait = WebDriverWait(self.browser, 120)
         wait.until(EC.presence_of_element_located((By.TAG_NAME, "h1")))
         h1_element = self.browser.find_element(By.TAG_NAME, "h1")
-        self.assertEqual(h1_element.text, "soccer wave")
+        self.assertEqual(h1_element.text, "Selamat datang di aplikasi soccer wave")
 
         logout_link = self.browser.find_element(By.PARTIAL_LINK_TEXT, "Logout")
         self.assertTrue(logout_link.is_displayed())
@@ -152,36 +152,44 @@ class SoccerWaveFunctionalTest(LiveServerTestCase):
         add_button.click()
 
         # Fill form
-        title_input = self.browser.find_element(By.NAME, "title")
-        content_input = self.browser.find_element(By.NAME, "content")
-        category_select = self.browser.find_element(By.NAME, "category")
+        name_input = self.browser.find_element(By.NAME, "name")
+        price_input = self.browser.find_element(By.NAME, "price")
+        description_input = self.browser.find_element(By.NAME, "description")
+        rating_input = self.browser.find_element(By.NAME, "rating")
+        brand_input = self.browser.find_element(By.NAME, "brand")
         thumbnail_input = self.browser.find_element(By.NAME, "thumbnail")
+        category_select = self.browser.find_element(By.NAME, "category")
+        stock_input = self.browser.find_element(By.NAME, "stock")
         is_featured_checkbox = self.browser.find_element(By.NAME, "is_featured")
 
-        title_input.send_keys("Test Product Title")
-        content_input.send_keys("Test product content for selenium testing")
+        name_input.send_keys("Test Product Name")
+        price_input.send_keys("100")
+        description_input.send_keys("Test product description for selenium testing")
+        rating_input.send_keys("5")
+        brand_input.send_keys("Test Brand")
         thumbnail_input.send_keys("https://example.com/image.jpg")
+        stock_input.send_keys("50")
 
         # Set category (select 'match' from dropdown)
 
         select = Select(category_select)
-        select.select_by_value("match")
+        select.select_by_value("ball")
 
         # Check is_featured checkbox
         is_featured_checkbox.click()
 
         # Submit form
-        title_input.submit()
+        name_input.submit()
 
         # Check if returned to main page and product appears
         wait = WebDriverWait(self.browser, 120)
-        wait.until(EC.text_to_be_present_in_element((By.TAG_NAME, "h1"), "soccer wave"))
+        wait.until(EC.text_to_be_present_in_element((By.TAG_NAME, "h1"), "Selamat datang di aplikasi soccer wave"))
         h1_element = self.browser.find_element(By.TAG_NAME, "h1")
-        self.assertEqual(h1_element.text, "soccer wave")
+        self.assertEqual(h1_element.text, "Selamat datang di aplikasi soccer wave")
 
         # Check if product title appears on page
-        wait.until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, "Test Product Title")))
-        product_title = self.browser.find_element(By.PARTIAL_LINK_TEXT, "Test Product Title")
+        wait.until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, "Test Product Name")))
+        product_title = self.browser.find_element(By.PARTIAL_LINK_TEXT, "Test Product Name")
         self.assertTrue(product_title.is_displayed())
 
     def test_product_detail(self):

@@ -15,7 +15,7 @@ TUGAS 2
     > Membuat fungsi show_main di views.py dan template main.html yang menampilkan data dari context
     > Routing di urls.py Aplikasi Main
     > Deployment ke PWS
-        - Membuat project di PWS dengan nama footballnews
+        - Membuat project di PWS dengan nama soccerwave
         - Menambahkan environment variables di PWS dashboard
         - Menambahkan URL deployment ke ALLOWED_HOSTS
         - Melakukan push ke remote PWS dengan git push pws master
@@ -65,7 +65,7 @@ TUGAS 2
 
 TUGAS 3
 1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
-=> Data delivery diperlukan untuk memungkinkan pertukaran data antara client dan server dalam format yang terstruktur dan mudah dipahami. Dalam pengembangan platform, data delivery    memungkinkan integrasi dengan berbagai sistem, aplikasi mobile, atau third-party services yang membutuhkan akses ke data dalam format tertentu seperti XML atau JSON.
+=> Data delivery diperlukan untuk memungkinkan pertukaran data antara client dan server dalam format yang terstruktur dan mudah dipahami. Dalam pengembangan platform, data delivery memungkinkan integrasi dengan berbagai sistem, aplikasi mobile, atau third-party services yang membutuhkan akses ke data dalam format tertentu seperti XML atau JSON.
 
 2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
 => JSON lebih baik karena:
@@ -88,11 +88,11 @@ TUGAS 3
     > Konfigurasi Routing URL
         Setelah membuat fungsi views, saya mengkonfigurasi routing URL di file urls.py untuk mengakses keempat fungsi tersebut. Saya menambahkan path untuk masing-masing endpoint: '/xml/' untuk show_xml, '/json/' untuk show_json, '/xml/<id>/' untuk show_xml_by_id, dan '/json/<id>/' untuk show_json_by_id. Konfigurasi routing ini memungkinkan client untuk mengakses data dalam format yang diinginkan dengan mudah melalui URL yang terstruktur dan konsisten.
     > Pembuatan Halaman dengan Tombol Add dan Detail
-        Saya mengembangkan halaman utama yang menampilkan semua data News yang ada dalam database. Halaman ini memiliki tombol "Add News" yang akan mengarahkan pengguna ke halaman form untuk menambahkan data baru. Setiap item News yang ditampilkan juga memiliki tombol "Read More" yang mengarahkan ke halaman detail dari News tersebut. Implementasi ini menggunakan template inheritance dengan base.html sebagai kerangka dasar, sehingga memastikan konsistensi tampilan across seluruh halaman aplikasi.
+        Saya mengembangkan halaman utama yang menampilkan semua data Product yang ada dalam database. Halaman ini memiliki tombol "Add Product" yang akan mengarahkan pengguna ke halaman form untuk menambahkan data baru. Setiap item Product yang ditampilkan juga memiliki tombol "Read More" yang mengarahkan ke halaman detail dari Product tersebut. Implementasi ini menggunakan template inheritance dengan base.html sebagai kerangka dasar, sehingga memastikan konsistensi tampilan across seluruh halaman aplikasi.
     > Implementasi Form untuk Menambah Data
-        Saya membuat form menggunakan ModelForm yang terhubung langsung dengan model News. Form ini secara otomatis menghasilkan field-field yang sesuai dengan definisi model, termasuk validasi dasar untuk setiap field. Pada halaman form, saya menambahkan csrf_token untuk keamanan, yang melindungi dari serangan CSRF. Form ini akan memvalidasi data input pengguna sebelum menyimpannya ke database, memastikan integritas data yang disimpan.
+        Saya membuat form menggunakan ModelForm yang terhubung langsung dengan model Product. Form ini secara otomatis menghasilkan field-field yang sesuai dengan definisi model, termasuk validasi dasar untuk setiap field. Pada halaman form, saya menambahkan csrf_token untuk keamanan, yang melindungi dari serangan CSRF. Form ini akan memvalidasi data input pengguna sebelum menyimpannya ke database, memastikan integritas data yang disimpan.
     > Pembuatan Halaman Detail
-        Untuk halaman detail, saya membuat template khusus yang menampilkan semua informasi dari sebuah News secara lengkap. Halaman ini juga menyertakan tombol untuk kembali ke halaman utama, memberikan navigasi yang intuitif bagi pengguna. Data yang ditampilkan termasuk judul, kategori, konten, thumbnail, serta informasi tambahan seperti status featured dan jumlah views.
+        Untuk halaman detail, saya membuat template khusus yang menampilkan semua informasi dari sebuah Product secara lengkap. Halaman ini juga menyertakan tombol untuk kembali ke halaman utama, memberikan navigasi yang intuitif bagi pengguna. Data yang ditampilkan termasuk judul, kategori, konten, thumbnail, serta informasi tambahan seperti status featured dan jumlah views.
     > Pengujian dengan Postman
         Saya melakukan pengujian menyeluruh terhadap keempat endpoint menggunakan Postman untuk memastikan bahwa semua fungsi bekerja dengan benar. Saya menguji berbagai skenario termasuk request untuk semua data, data berdasarkan ID yang valid, dan ID yang tidak valid untuk memverifikasi error handling yang telah diimplementasikan.
     > Proses Deployment ke GitHub dan Push PWS ke web pbp
@@ -270,7 +270,7 @@ Kekurangan:
     > Import Login_required Decorator
         Saya mengimpor login_required dari django.contrib.auth.decorators. Decorator ini digunakan untuk membatasi akses hanya untuk user yang sudah login.
     > Menerapkan Decorator pada View Functions
-        Saya menambahkan @login_required(login_url='/login') di atas fungsi show_main dan show_news. Decorator ini akan memeriksa status login user sebelum menjalankan fungsi view. Jika user belum login, akan di-redirect ke halaman login.
+        Saya menambahkan @login_required(login_url='/login') di atas fungsi show_main dan show_products. Decorator ini akan memeriksa status login user sebelum menjalankan fungsi view. Jika user belum login, akan di-redirect ke halaman login.
     > Testing Restriksi Akses
         Setelah implementasi, saya test dengan mengakses halaman utama tanpa login untuk memastikan redirect ke login page bekerja correctly.
     
@@ -286,20 +286,164 @@ Kekurangan:
     > Menampilkan Last Login di Template
         Saya menambahkan <h5>Sesi terakhir login: {{ last_login }}</h5> di main.html untuk menampilkan informasi last login kepada user.
 
-    f. Menghubungkan Model News dengan User
-    > Modifikasi Model News
-        Saya menambahkan user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) ke model News. ForeignKey ini menghubungkan setiap news dengan user yang membuatnya. Parameter null=True memungkinkan news existing tanpa user selama transisi.
+    f. Menghubungkan Model Product dengan User
+    > Modifikasi Model Product
+        Saya menambahkan user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) ke model Product. ForeignKey ini menghubungkan setiap product dengan user yang membuatnya. Parameter null=True memungkinkan product existing tanpa user selama transisi.
     > Membuat dan Menjalankan Migrasi
         Saya menjalankan python manage.py makemigrations untuk membuat migration file, kemudian python manage.py migrate untuk menerapkan perubahan ke database.
-    > Modifikasi Fungsi Create_news
-        Pada fungsi create_news, setelah form valid, saya menggunakan form.save(commit=False) untuk mendapatkan news object tanpa langsung menyimpan ke database. Kemudian saya set news_entry.user = request.user untuk menghubungkan news dengan user yang sedang login, baru kemudian news_entry.save().
+    > Modifikasi Fungsi Create_product
+        Pada fungsi create_product, setelah form valid, saya menggunakan form.save(commit=False) untuk mendapatkan product object tanpa langsung menyimpan ke database. Kemudian saya set product_entry.user = request.user untuk menghubungkan product dengan user yang sedang login, baru kemudian product_entry.save().
     > Implementasi Filter Berdasarkan User
-        Saya modifikasi fungsi show_main untuk menangani filter berdasarkan user. Dengan parameter GET 'filter', user bisa memilih melihat semua articles atau hanya articles milik sendiri. Saya menggunakan News.objects.filter(user=request.user) untuk mendapatkan news milik user tertentu.
+        Saya modifikasi fungsi show_main untuk menangani filter berdasarkan user. Dengan parameter GET 'filter', user bisa memilih melihat semua articles atau hanya articles milik sendiri. Saya menggunakan product.objects.filter(user=request.user) untuk mendapatkan product milik user tertentu.
     > Menampilkan Informasi Author
-        Saya menambahkan display author information di news_detail.html dengan conditional: jika news memiliki user, tampilkan username; jika tidak, tampilkan 'Anonymous'.
+        Saya menambahkan display author information di product_detail.html dengan conditional: jika product memiliki user, tampilkan username; jika tidak, tampilkan 'Anonymous'.
     > Testing Fungsi Ownership
-        Saya test dengan membuat dua user account dan membuat news dari masing-masing account untuk memverifikasi bahwa sistem filter dan ownership bekerja dengan benar.
+        Saya test dengan membuat dua user account dan membuat product dari masing-masing account untuk memverifikasi bahwa sistem filter dan ownership bekerja dengan benar.
 
+TUGAS 5
+ 1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+=> Urutan prioritas CSS selector dihitung berdasarkan specificity (kekhususan) dengan urutan dari tertinggi ke terendah:
+    > Inline Styles (style="...") - Specificity: 1000
+    > ID Selectors (#id) - Specificity: 100
+    > Class Selectors (.class), Attribute Selectors ([type="text"]), Pseudo-classes (:hover) - Specificity: 10
+    > Element Selectors (div, p), Pseudo-elements (::before) - Specificity: 1
+    > Universal Selector (*) - Specificity: 0
+=> Tetapi ada beberapa aturan khusus juga, di mana:
+    > !important - Mengabaikan semua specificity
+    > Source Order - Jika specificity sama, yang terakhir ditulis yang menang
+    > Inheritance - Style yang diwariskan memiliki specificity terendah
 
-    
+ 2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+=> Mengapa Responsive Design Penting:
+    > Multi-Device Usage: Pengguna mengakses web dari berbagai perangkat (desktop, tablet, mobile)
+    > User Experience: Memastikan pengalaman pengguna optimal di semua ukuran layar
+    > SEO Benefits: Google memberikan ranking lebih tinggi untuk website mobile-friendly
+    > Maintenance: Lebih mudah maintain satu codebase daripada versi terpisah
+    > Cost Effective: Pengembangan dan maintenance lebih hemat
+=> Contoh Aplikasi:
+    > Sudah Responsive:
+        - Amazon: Layout menyesuaikan otomatis dari desktop ke mobile
+        - Twitter: Navigasi berubah menjadi hamburger menu di mobile
+        - Medium: Typography dan spacing menyesuaikan layar
+    > Belum Responsive (atau kurang baik):
+        - Website pemerintah lama: Sering fixed width, tidak bisa di-scroll properly di mobile
+        - Web aplikasi enterprise lawas: Butuh zoom dan scroll horizontal di mobile
+        - Blog template tua: Layout broken di layar kecil
 
+ 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+=> Margin, border, dan padding adalah bagian dari box model di CSS.
+    > Margin → Jarak di luar elemen, memisahkan elemen dari elemen lain. Area nya itu di luar border dan warnanya transparan.
+    > Border → Garis pembatas di sekeliling elemen, terletak antara margin dan padding. Border bisa diwarnai backgroundnya, style nya bervariasi, dan bisa dibuat rounded.
+    > Padding → Jarak antara isi elemen (content) dengan border. Warnanya tergantung atau mengikuti background elemen. Meningkatkan readability content dan memperbesar touch targets
+=> Cara untuk mengimplementasinya:
+    > Margin
+        - Shorthand properties
+            = Semua sisi sama → margin: 10px
+            = Vertikal | Horizontal → margin: 10px 20px
+            = Top | Horizontal | Bottom → margin: 5px 10px 15px
+            = Top | Right | Bottom | Left → margin: 5px 10px 15px 20px
+        - Individual properties
+            = Hanya sisi atas → margin-top: 15px
+            = Hanya sisi kanan → margin-right: 20px
+            = Hanya sisi bawah → margin-bottom: 25px
+            = Hanya sisi kiri → margin-left: 30px
+        - Special Values
+            = Pusatkan elemen secara horizontal → margin: auto
+            = Top-bottom | right-left → margin: 0 auto
+            = Percentage relative to PARENT width → margin: 10%;  
+            = Warisi dari parent → margin: inherit
+            = Reset ke default value → margin: initial
+        - Perilaku khusus, jika elemen a dan elemen b bersebelahan, maka jarak margin nya bukan pertambahan dari margin yang bersebelahan tersebut, tetapi margin yang terbesar yang digunakan.
+    > Border
+        - Shorthand property
+            = width | style | color
+        - Inividual Properties per sisi
+            = border-sisi
+            = border-sisi-width
+            = border-sisi-style
+            = broder-sisi-color
+        - Border style variations
+            = solid, dashed, dotted, none, dll.
+        - Border Radius (sudut melengkung)
+            = Semua sudut sama → border-radius: 5px
+            = Top-left | Top-right | Bottom-right | Bottom-left → border-radius: 5px 10px 15px 20px
+            = Horizontal / Vertical radii (ellipse) → border-radius: 10px 20px 30px 40px / 5px 10px 15px 20px
+            = Individual corners → border-top-left-radius: 
+            = Membuat circle → border-radius: 50%
+    > Padding
+        -  Shorthand Properties
+            = Semua sisi sama → padding: 10px
+            = Vertikal | Horizontal → padding: 10px 20px
+            = Top | Horizontal | Bottom → padding: 5px 10px 15px
+            = Top | Right | Bottom | Left → padding: 5px 10px 15px 20px
+        -  Individual Properties
+            = Hanya sisi atas → padding-top: 15px
+            = Hanya sisi kanan → padding-right: 20px
+            = Hanya sisi bawah → padding-bottom: 25px
+            = Hanya sisi kiri → padding-left: 30px
+        - Special values
+            = Percentage relative to PARENT width → padding: 5%
+            = Relative to font size → padding: 1em
+            = Relative to root font size → padding: 1rem
+            = Warisi dari parent → padding: inherit
+            = Reset ke default → padding: initial
+
+ 4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+ => Keduanya digunakan untuk layouting modern di CSS. Bedanya, Flexbox mengatur item dalam satu garis, sedangkan Grid membangun layout keseluruhan.
+    > Flexbox
+        Flexbox adalah sebuah sistem tata letak di CSS yang dirancang untuk menyusun elemen secara fleksibel dalam satu arah, yaitu horizontal (baris) atau vertikal (kolom). Dengan flexbox, kita bisa dengan mudah mengatur posisi elemen agar rata kiri, rata kanan, berada di tengah, atau bahkan tersebar merata.
+        Kegunaannya antara lain:
+            - Membuat navbar yang elemen-elemennya sejajar rapi.
+            - Menyusun kartu produk yang ukurannya berbeda agar tetap seimbang.
+            - Membuat tombol atau konten bisa otomatis menyesuaikan ruang kosong di dalam container.
+        Intinya, flexbox sangat efektif untuk mengatur penyusunan elemen dalam satu garis.
+    > Grid Layout
+        Grid layout adalah sistem tata letak dua dimensi di CSS, artinya kita bisa menyusun elemen baik dalam baris maupun kolom secara bersamaan. Grid memungkinkan kita membuat struktur halaman yang kompleks dengan mudah, seperti membagi layar menjadi area header, sidebar, konten utama, dan footer.
+        Kegunaannya antara lain:
+            - Membuat layout halaman web yang memiliki beberapa bagian berbeda (misalnya: header di atas, sidebar di kiri, konten di tengah).
+            - Menyusun galeri foto dalam bentuk kotak-kotak rapi.
+            - Menyediakan dashboard aplikasi dengan banyak panel yang saling sejajar.
+            - Intinya, grid sangat cocok jika kita ingin mengatur struktur keseluruhan halaman dengan banyak kolom dan baris.
+
+ 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+=> > Setup Tailwind CSS
+        - Memodifikasi base.html. Menambahkan viewport meta tag dan CDN Tailwind CSS di bagian head untuk responsive design dan styling framework
+        - Membuat file global.css. Membuat custom CSS di /static/css/global.css untuk styling form yang konsisten
+        - Menghubungkan CSS ke template. Menambahkan link ke global.css di base.html menggunakan {% static %} tag
+    > Fitur Edit News
+        - Membuat view edit_news. Fungsi ini mengambil data news berdasarkan ID, memvalidasi form, dan menyimpan perubahan
+        - Membuat template edit_news.html. Template form untuk mengedit data news yang sudah ada
+        - Konfigurasi URL. Menambahkan route untuk mengakses halaman edit
+        - Integrasi ke main.html. Menambahkan tombol edit di setiap news item dengan kondisi hanya tampil untuk pemilik news
+    > Fitur Delete News
+        - Membuat view delete_news. Fungsi untuk menghapus data news berdasarkan ID
+        - Konfigurasi URL. Menambahkan route untuk delete functionality
+        - Integrasi ke main.html. Menambahkan tombol delete dengan konfirmasi implisit (langsung eksekusi)
+    > Navigation Bar
+        - Membuat navbar.html. Komponen navbar terpisah dengan styling Tailwind CSS
+        - Responsive design. Mengimplementasikan hamburger menu untuk mobile view
+        - JavaScript toggle. Menambahkan script sederhana untuk show/hide mobile menu
+        - Integrasi ke main templat. Menggunakan {% include 'navbar.html' %} di main.html
+    > Static Files Configuration
+        - Menambahkan WhiteNoise. Middleware untuk serving static files di production
+        - Konfigurasi STATIC settings. Setup STATIC_URL, STATICFILES_DIRS, dan STATIC_ROOT
+        - Membuat struktur direktori. /static/css/ dan /static/image/ untuk organisasi file
+    > Styling Halaman
+        - Login & Register Pages
+            = Layout redesign. Menggunakan card-based design dengan shadow dan border
+            = Form styling. Konsisten menggunakan class form-style dari global.css
+            = Error handling. Menampilkan error messages dengan styling yang user-friendly
+            = Responsive desig. Flexbox layout yang adaptif ke berbagai screen size
+        - Home Page (Main)
+            = Card component. Membuat card_news.html terpisah untuk reusable news card
+            = Grid layout. Menggunakan Tailwind grid system untuk tata letak responsif
+            = Empty state. Menampilkan ilustrasi ketika tidak ada news
+            = Filter system. Implementasi filter "All News" vs "My News"
+        - Detail News Page
+            = Article layout. Structured content dengan header, thumbnail, dan content sections
+            = Badge system. Menampilkan category, featured, dan hot status dengan color coding
+            = Back navigation. Konsisten di semua detail pages
+        - Create & Edit News Pages
+            = Form consistency. Menggunakan styling yang sama untuk create dan edit forms
+            = Layout optimization. Max-width container untuk readability yang baik
+            = Action buttons. Clear primary dan secondary actions

@@ -1,97 +1,359 @@
-<nav class="fixed top-0 left-0 w-full bg-pink-200 border-b border-gray-200 shadow-sm z-50">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center">
-          <h1 class="text-xl font-semibold text-gray-900">
-            <span class="text-pink-600">Soccer</span> Wave
-          </h1>
-        </div>
-        
-        <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center space-x-8">
-          <a href="/" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-            Home
-          </a>
-          <a href="{% url 'main:create_product' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-            Create Product
-          </a>
-        </div>
-        
-        <!-- Desktop User Section -->
-        <div class="hidden md:flex items-center space-x-6">
-          {% if user.is_authenticated %}
-            <div class="text-right">
-              <div class="text-sm font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-xs text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
+<!-- templates/navbar.html -->
+<nav class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-md border-b border-pink-200 shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo/Brand -->
+            <div class="flex items-center">
+                <a href="/" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-transform duration-200">
+                        <i class="fas fa-futbol text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">
+                            <span class="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent">Soccer</span>
+                            <span class="text-gray-700">Wave</span>
+                        </h1>
+                        <div class="h-1 w-0 group-hover:w-full bg-gradient-to-r from-pink-400 to-pink-500 transition-all duration-300 rounded-full"></div>
+                    </div>
+                </a>
             </div>
-            <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
-              Logout
-            </a>
-          {% else %}
-            <a href="{% url 'main:login' %}" class="text-gray-500 hover:text-gray-900 font-medium transition-colors">
-              Login
-            </a>
-            <a href="{% url 'main:register' %}" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded font-medium transition-colors">
-              Register
-            </a>
-          {% endif %}
-        </div>
-        
-        <!-- Mobile Menu Button -->
-        <div class="md:hidden flex items-center">
-          <button class="mobile-menu-button p-2 text-gray-600 hover:text-gray-900 transition-colors">
-            <span class="sr-only">Open menu</span>
-            <div class="w-6 h-6 flex flex-col justify-center items-center">
-              <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm"></span>
-              <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5"></span>
-              <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm"></span>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/" class="nav-link {% if request.path == '/' %}nav-link-active{% endif %}">
+                    <i class="fas fa-home mr-2"></i>
+                    Home
+                </a>
+                <!-- Create Product hanya untuk user yang sudah login -->
+                {% if user.is_authenticated %}
+                <a href="{% url 'main:create_product' %}" class="nav-link {% if 'create' in request.path %}nav-link-active{% endif %}">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Create Product
+                </a>
+                {% endif %}
             </div>
-          </button>
+
+            <!-- Desktop User Section -->
+            <div class="hidden md:flex items-center space-x-6">
+                {% if user.is_authenticated %}
+                    <!-- Simple Logout Button with User Info -->
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <div class="text-sm font-semibold text-gray-900">{{ user.username }}</div>
+                            <div class="text-xs text-gray-500">Welcome back!</div>
+                        </div>
+                        <button onclick="confirmLogout()" 
+                                class="group relative flex items-center space-x-3 bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                            
+                            <!-- User Avatar -->
+                            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-semibold border-2 border-white/30">
+                                {{ user.username|first|upper }}
+                            </div>
+                            
+                            <!-- Logout Text -->
+                            <span class="flex items-center">
+                                <i class="fas fa-sign-out-alt mr-2"></i>
+                                Logout
+                            </span>
+
+                            <!-- Hover Tooltip -->
+                            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                                Click to logout
+                                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+                            </div>
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="flex items-center space-x-4">
+                        <a href="{% url 'main:login' %}" class="text-pink-500 hover:text-pink-600 font-medium transition-colors duration-200 flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Login
+                        </a>
+                        <a href="{% url 'main:register' %}" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Register
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button class="mobile-menu-button p-2 rounded-lg text-gray-600 hover:text-pink-500 hover:bg-pink-50 transition-colors duration-200 border border-transparent hover:border-pink-200">
+                    <span class="sr-only">Open menu</span>
+                    <div class="w-6 h-6 flex flex-col justify-center items-center space-y-1">
+                        <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm transform" id="mobile-line-1"></span>
+                        <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm transform" id="mobile-line-2"></span>
+                        <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm transform" id="mobile-line-3"></span>
+                    </div>
+                </button>
+            </div>
         </div>
-      </div>
     </div>
+
     <!-- Mobile Menu -->
-    <div class="mobile-menu hidden md:hidden bg-white border-t border-gray-200">
-      <div class="px-6 py-4 space-y-4">
-        <!-- Mobile Navigation Links -->
-        <div class="space-y-1">
-          <a href="/" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
-            Home
-          </a>
-          <a href="{% url 'main:create_product' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
-            Create Product
-          </a>
-        </div>
-        
-        <!-- Mobile User Section -->
-        <div class="border-t border-gray-200 pt-4">
-          {% if user.is_authenticated %}
-            <div class="mb-4">
-              <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
-              <div class="text-sm text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
-            </div>
-            <a href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
-              Logout
-            </a>
-          {% else %}
+    <div class="mobile-menu hidden md:hidden bg-white/95 backdrop-blur-md border-t border-pink-200 shadow-xl">
+        <div class="px-4 py-6 space-y-6">
+            <!-- Mobile Navigation Links -->
             <div class="space-y-3">
-              <a href="{% url 'main:login' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
-                Login
-              </a>
-              <a href="{% url 'main:register' %}" class="block bg-pink-500 hover:bg-pink-600 text-white font-medium py-3 px-4 rounded text-center transition-colors">
-                Register
-              </a>
+                <a href="/" class="mobile-nav-link {% if request.path == '/' %}mobile-nav-link-active{% endif %}">
+                    <i class="fas fa-home mr-4 text-lg"></i>
+                    Home
+                </a>
+                <!-- Create Product hanya untuk user yang sudah login -->
+                {% if user.is_authenticated %}
+                <a href="{% url 'main:create_product' %}" class="mobile-nav-link {% if 'create' in request.path %}mobile-nav-link-active{% endif %}">
+                    <i class="fas fa-plus-circle mr-4 text-lg"></i>
+                    Create Product
+                </a>
+                {% endif %}
             </div>
-          {% endif %}
+
+            <!-- Mobile User Section -->
+            <div class="border-t border-pink-200 pt-6">
+                {% if user.is_authenticated %}
+                    <!-- User Info & Logout -->
+                    <div class="flex items-center space-x-4 mb-6 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
+                      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center text-white text-xl font-bold shadow-inner">
+                        {{ user.username|first|upper }}
+                      </div>
+                      <div class="flex-1">
+                        <div class="text-base font-semibold text-gray-900">{{ user.username }}</div>
+                        <div class="text-xs text-gray-500">Ready to logout?</div>
+                      </div>
+                    </div>
+                    <div class="pt-4 border-t border-pink-200">
+                      <button onclick="confirmLogout()" class="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center shadow-lg transform hover:scale-105">
+                        <i class="fas fa-sign-out-alt mr-3 text-lg"></i>
+                        Logout
+                      </button>
+                    </div>
+                {% else %}
+                    <div class="space-y-4">
+                        <a href="{% url 'main:login' %}" class="mobile-nav-link">
+                            <i class="fas fa-sign-in-alt mr-4 text-lg"></i>
+                            Login
+                        </a>
+                        <a href="{% url 'main:register' %}" class="w-full bg-pink-500 hover:bg-pink-600 text-white px-6 py-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center shadow-lg transform hover:scale-105">
+                            <i class="fas fa-user-plus mr-3"></i>
+                            Register
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-      </div>
     </div>
-    <script>
-      const btn = document.querySelector("button.mobile-menu-button");
-      const menu = document.querySelector(".mobile-menu");
+</nav>
+
+<style>
+/* Navigation Link Styles */
+.nav-link {
+    @apply text-gray-700 hover:text-pink-500 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center relative;
+}
+
+.nav-link-active {
+    @apply text-pink-500 bg-pink-50;
+}
+
+.nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 w-0 h-0.5 bg-pink-500 transition-all duration-200 transform -translate-x-1/2;
+}
+
+.nav-link:hover::after,
+.nav-link-active::after {
+    @apply w-3/4;
+}
+
+/* Mobile Navigation Link Styles */
+.mobile-nav-link {
+    @apply text-gray-700 hover:text-pink-500 hover:bg-pink-50 block px-4 py-4 rounded-lg text-base font-medium transition-colors duration-200 flex items-center;
+}
+
+.mobile-nav-link-active {
+    @apply text-pink-500 bg-pink-50;
+}
+
+/* Mobile menu animations */
+.mobile-menu {
+    transition: all 0.3s ease-in-out;
+}
+
+.mobile-menu.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile hamburger animation */
+.mobile-menu-button.active #mobile-line-1 {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.mobile-menu-button.active #mobile-line-2 {
+    opacity: 0;
+}
+
+.mobile-menu-button.active #mobile-line-3 {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Backdrop blur support */
+@supports (backdrop-filter: blur(10px)) {
+    .backdrop-blur-md {
+        backdrop-filter: blur(12px);
+    }
+}
+
+/* Enhanced button styles */
+button {
+    @apply focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-offset-2;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: all 0.2s ease-in-out;
+}
+</style>
+
+<script>
+// Mobile menu functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const menuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const line1 = document.getElementById('mobile-line-1');
+    const line2 = document.getElementById('mobile-line-2');
+    const line3 = document.getElementById('mobile-line-3');
+
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', () => {
+            const isHidden = mobileMenu.classList.contains('hidden');
+            
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => mobileMenu.classList.add('show'), 10);
+                menuButton.classList.add('active');
+            } else {
+                mobileMenu.classList.remove('show');
+                menuButton.classList.remove('active');
+                setTimeout(() => mobileMenu.classList.add('hidden'), 300);
+            }
+        });
+    }
+
+    // Close mobile menu when clicking on links
+    const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.remove('show');
+            menuButton.classList.remove('active');
+            setTimeout(() => mobileMenu.classList.add('hidden'), 300);
+        });
+    });
+
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', function() {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 10) {
+            nav.classList.add('shadow-xl', 'bg-white/98');
+            nav.classList.remove('shadow-lg', 'bg-white/95');
+        } else {
+            nav.classList.add('shadow-lg', 'bg-white/95');
+            nav.classList.remove('shadow-xl', 'bg-white/98');
+        }
+    });
+});
+
+// Enhanced logout confirmation
+function confirmLogout() {
+    // Create custom confirmation modal
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+    modal.innerHTML = `
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full mx-auto animate-scale-in">
+            <div class="text-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-sign-out-alt text-white text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Logout Confirmation</h3>
+                <p class="text-gray-600 text-sm">Are you sure you want to logout from Soccer Wave?</p>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="this.closest('.fixed').remove()" 
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                    Cancel
+                </button>
+                <button onclick="performLogout()" 
+                        class="flex-1 bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white py-3 rounded-xl font-medium transition-all transform hover:scale-105 shadow-lg">
+                    Yes, Logout
+                </button>
+            </div>
+        </div>
+    `;
     
-      btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-      });
-    </script>
-  </nav>
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+function performLogout() {
+    // Show loading state
+    const logoutButtons = document.querySelectorAll('button[onclick*="logout"]');
+    logoutButtons.forEach(btn => {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Logging out...';
+        btn.disabled = true;
+        
+        // Restore after 3 seconds if still processing
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+        }, 3000);
+    });
+    
+    // Redirect to logout URL
+    window.location.href = "{% url 'main:logout' %}";
+}
+
+// Animation for modal
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes scale-in {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .animate-scale-in {
+        animation: scale-in 0.2s ease-out;
+    }
+    
+    /* Enhanced focus styles */
+    button:focus {
+        outline: none;
+        ring: 2px solid #f472b6;
+        ring-offset: 2px;
+    }
+`;
+document.head.appendChild(style);
+</script>

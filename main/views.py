@@ -15,6 +15,9 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 @login_required(login_url='/login')
 def show_main(request):
     filter_type = request.GET.get("filter", "all")  # default 'all'
@@ -144,3 +147,108 @@ def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
+
+# Tambahkan create product dengan AJAX
+@csrf_exempt
+@login_required(login_url='/login')
+def create_product_ajax(request):
+    if request.method == 'POST':
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        description = request.POST.get("description")
+        rating = request.POST.get("rating")
+        brand = request.POST.get("brand")
+        thumbnail = request.POST.get("thumbnail")
+        category = request.POST.get("category")
+        stock = request.POST.get("stock")
+        is_featured = request.POST.get("is_featured") == 'true'
+
+        is_featured = request.POST.get("is_featured")
+        if is_featured == 'true':
+            is_featured = True
+        else:
+            is_featured = False
+
+        product = Product.objects.create(
+            user=request.user,
+            name=name,
+            price=price,
+            description=description,
+            rating=rating,
+            brand=brand,
+            thumbnail=thumbnail,
+            category=category,
+            stock=stock,
+            is_featured=is_featured
+        )
+
+        return JsonResponse({
+            'message': 'Product created successfully!',
+            'product_id': product.id
+        }, status=201)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# Tambahkan view untuk edit product dengan AJAX
+@csrf_exempt
+@login_required(login_url='/login')
+def edit_product_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+    
+    if request.method == 'POST':
+        product.name = request.POST.get("name")
+        product.price = request.POST.get("price")
+        product.description = request.POST.get("description")
+        product.rating = request.POST.get("rating")
+        product.brand = request.POST.get("brand")
+        product.thumbnail = request.POST.get("thumbnail")
+        product.category = request.POST.get("category")
+        product.stock = request.POST.get("stock")
+        is_featured = request.POST.get("is_featured")
+        if is_featured == 'true':
+            product.is_featured = True
+        else:
+            product.is_featured = False
+        product.save()
+
+        return JsonResponse({
+            'message': 'Product updated successfully!',
+            'product_id': product.id
+        })
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# Tambahkan view untuk delete product dengan AJAX
+@csrf_exempt
+@login_required(login_url='/login')
+def delete_product_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    if product.user != request.user:
+        return JsonResponse({'error': 'You are not authorized to delete this product'}, status=403)
+    
+    if request.method == 'DELETE':
+        product_id = product.id
+        product.delete()
+        return JsonResponse({
+            'message': 'Product deleted successfully!',
+            'product_id': str(product_id)
+        })
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# Tambahkan view untuk get product JSON
+@login_required(login_url='/login')
+def get_product_json(request):
+    filter_type = request.GET.get('filter', 'all')
+    
+    print(f"DEBUG: Filter type = {filter_type}")
+    print(f"DEBUG: Current user = {request.user} (ID: {request.user.id})")
+    
+    if filter_type == 'my':
+        products = Product.objects.filter(user=request.user)
+        print(f"DEBUG: My products count = {products.count()}")
+    else:
+        products = Product.objects.all()
+        print(f"DEBUG: All products count = {products.count()}")
+    return HttpResponse(serializers.serialize('json', products), content_type='application/json')

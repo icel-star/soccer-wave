@@ -4,11 +4,237 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {% block meta %} {% endblock meta %}
+    <title>{% block meta %}{% endblock meta %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    {% block content %} {% endblock content %}
+    {% block content %} 
+    {% endblock content %}
+
+     <!-- Include Modals and Toast -->
+    {% include 'modal_create_edit.html' %}
+    {% include 'modal_delete.html' %}
+    {% include 'toast.html' %}
+
+    <!-- Global JavaScript -->
+    <script>
+    // Global variable to track current product ID for editing/deleting
+    let currentProductId = null;
+
+    // CSRF token function
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Toast Functions dengan design yang lebih baik
+    function showToast(message, type = 'success', description = '') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastDescription = document.getElementById('toastDescription');
+        const toastIcon = document.getElementById('toastIcon');
+
+        // Set message
+        toastMessage.textContent = message;
+        
+        // Set description jika ada
+        if (description) {
+            toastDescription.textContent = description;
+            toastDescription.classList.remove('hidden');
+        } else {
+            toastDescription.classList.add('hidden');
+        }
+
+        // Set icon dan color berdasarkan type
+        let iconSvg = '';
+        let borderColor = '';
+
+        switch (type) {
+            case 'success':
+                iconSvg = '<i class="fas fa-check-circle text-green-500 text-lg"></i>';
+                borderColor = 'border-l-4 border-green-500';
+                break;
+            case 'error':
+                iconSvg = '<i class="fas fa-exclamation-circle text-red-500 text-lg"></i>';
+                borderColor = 'border-l-4 border-red-500';
+                break;
+            case 'warning':
+                iconSvg = '<i class="fas fa-exclamation-triangle text-yellow-500 text-lg"></i>';
+                borderColor = 'border-l-4 border-yellow-500';
+                break;
+            case 'info':
+                iconSvg = '<i class="fas fa-info-circle text-pink-400 text-lg"></i>';
+                borderColor = 'border-l-4 border-pink-400';
+                break;
+            default:
+                iconSvg = '<i class="fas fa-bell text-gray-500 text-lg"></i>';
+                borderColor = 'border-l-4 border-gray-500';
+        }
+
+        toastIcon.innerHTML = iconSvg;
+        toast.className = `fixed top-4 right-4 p-4 max-w-sm w-full bg-white rounded-lg shadow-xl border border-gray-200 transform translate-x-full transition-transform duration-300 z-50 ${borderColor}`;
+
+        // Show toast
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            hideToast();
+        }, 5000);
+    }
+
+    function hideToast() {
+        const toast = document.getElementById('toast');
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 300);
+    }
+
+    // Modal functions
+    function showCreateModal() {
+        document.getElementById('modalTitle').textContent = 'Create Product';
+        document.getElementById('productForm').reset();
+        document.getElementById('productId').value = '';
+        document.getElementById('submitButtonText').textContent = 'Publish Product';
+        
+        const modal = document.getElementById('productModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('modal-enter');
+        }, 10);
+        currentProductId = null;
+    }
+
+    function hideModal() {
+        const modal = document.getElementById('productModal');
+        modal.classList.add('modal-exit');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('modal-enter', 'modal-exit');
+        }, 200);
+        currentProductId = null;
+    }
+
+    function showDeleteModal(productId) {
+        currentProductId = productId;
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.add('modal-enter');
+        }, 10);
+
+        const confirmDeleteBtn = document.getElementById('confirmDelete');
+        confirmDeleteBtn.onclick = function() {
+            deleteProduct(currentProductId);
+        };
+    }
+
+    function hideDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.add('modal-exit');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('modal-enter', 'modal-exit');
+        }, 200);
+        currentProductId = null;
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('productModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal();
+            }
+        });
+
+        document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideDeleteModal();
+            }
+        });
+    });
+    </script>
+
+    <!-- Additional CSS untuk animasi dan styling -->
+    <style>
+    .modal-enter {
+        animation: modalEnter 0.3s ease-out;
+    }
+
+    .modal-exit {
+        animation: modalExit 0.2s ease-in;
+    }
+
+    @keyframes modalEnter {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes modalExit {
+        from {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.95) translateY(-10px);
+        }
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .product-card {
+        transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    </style>
+
+<script src="{% static 'js/productManager.js' %}"></script>
+<script>
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeProductManager();
+        
+        // Show a toast if there is a message in localStorage
+        const toastMsg = localStorage.getItem('toastMessage');
+        const toastType = localStorage.getItem('toastType') || 'success';
+        if (toastMsg) {
+            showToast(toastMsg, toastType);
+            localStorage.removeItem('toastMessage');
+            localStorage.removeItem('toastType');
+        }
+    });
+</script>
+
 </body>
 </html>

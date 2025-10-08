@@ -1,0 +1,19 @@
+<!-- templates/toast.html -->
+<div id="toast" class="fixed top-4 right-4 p-4 max-w-sm w-full bg-white rounded-lg shadow-xl border border-gray-200 transform translate-x-full transition-transform duration-300 z-50 hidden">
+  <div class="flex items-start">
+    <div id="toastIcon" class="flex-shrink-0 mt-0.5">
+      <!-- Icon will be inserted here by JavaScript -->
+    </div>
+    <div class="ml-3 w-0 flex-1">
+      <p id="toastMessage" class="text-sm font-medium text-gray-900"></p>
+      <p id="toastDescription" class="mt-1 text-sm text-gray-500 hidden"></p>
+    </div>
+    <div class="ml-4 flex-shrink-0 flex">
+      <button onclick="hideToast()" class="inline-flex text-gray-400 hover:text-gray-500 transition-colors duration-200">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

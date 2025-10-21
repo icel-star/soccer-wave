@@ -134,26 +134,33 @@ function renderProducts(products) {
 function createProductCard(productData) {
     console.log('Creating product card for:', productData);
     
-    // Handle different response formats
     let product, productId;
     
     if (productData.fields && productData.pk) {
-        // Format: {pk: 1, fields: {...}}
         product = productData.fields;
         productId = productData.pk;
     } else if (productData.id) {
-        // Format: {id: 1, name: "...", ...}
         product = productData;
         productId = productData.id;
     } else {
-        // Fallback: assume it's the product object directly
         product = productData;
         productId = productData.pk || productData.id || Math.random();
     }
 
+    let productUserId;
+    if (product.user) {
+        if (typeof product.user === 'object') {
+            productUserId = product.user.id || product.user.pk || product.user.toString();
+        } else {
+            productUserId = product.user.toString();
+        }
+    } else {
+        productUserId = null;
+    }
+
     // Get user info from Django template
-    const currentUserId = "{{ user.id }}"; 
-    const isOwner = currentUserId && currentUserId !== 'None' && currentUserId === product.user.toString();
+    const currentUserId = window.currentUserId;
+    const isOwner = currentUserId && currentUserId !== 'None' && currentUserId.toString() === productUserId.toString();
     
     console.log('Product details:', { productId, product, currentUserId, isOwner });
 
@@ -206,7 +213,7 @@ function createProductCard(productData) {
                 </span>
             </div>
             
-            <!-- Rating -->
+            <!-- Rating and Stock -->
             <div class="flex items-center mb-4">
                 <div class="flex items-center text-yellow-400 mr-2">
                     ${generateStarRating(product.rating || 0)}
@@ -242,13 +249,11 @@ function createProductCard(productData) {
                 ${isOwner ? `
                     <div class="flex space-x-2">
                         <button onclick="event.stopPropagation(); showEditModal('${productId}')" 
-                                class="inline-flex items-center text-gray-500 hover:text-pink-500 text-sm transition-colors p-2 rounded-lg hover:bg-pink-50">
-                            <i class="fas fa-edit mr-1"></i>
+                                class="text-blue-400 hover:text-blue-500 text-xs transition-colors px-2 py-1 rounded hover:bg-blue-50">
                             Edit
                         </button>
                         <button onclick="event.stopPropagation(); showDeleteModal('${productId}')" 
-                                class="inline-flex items-center text-gray-500 hover:text-red-600 text-sm transition-colors p-2 rounded-lg hover:bg-red-50">
-                            <i class="fas fa-trash mr-1"></i>
+                                class="text-red-400 hover:text-red-500 text-xs transition-colors px-2 py-1 rounded hover:bg-red-50">
                             Delete
                         </button>
                     </div>

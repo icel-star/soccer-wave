@@ -265,6 +265,40 @@ function createProductCard(productData) {
     return card;
 }
 
+function showEditModal(productId) {
+    // Set modal title and button
+    document.getElementById('modalTitle').textContent = 'Edit Product';
+    document.getElementById('submitButtonText').textContent = 'Update Product';
+    document.getElementById('productId').value = productId;
+
+    // Fetch product data via AJAX
+    fetch(`/json/${productId}/`)
+        .then(response => response.json())
+        .then(data => {
+            // If using Django's serializer, data is an array
+            const product = data[0].fields;
+            document.getElementById('name').value = product.name || '';
+            document.getElementById('price').value = product.price || '';
+            document.getElementById('brand').value = product.brand || '';
+            document.getElementById('category').value = product.category || '';
+            document.getElementById('rating').value = product.rating || '';
+            document.getElementById('stock').value = product.stock || '';
+            document.getElementById('thumbnail').value = product.thumbnail || '';
+            document.getElementById('description').value = product.description || '';
+            document.getElementById('is_featured').checked = product.is_featured ? true : false;
+        })
+        .catch(() => {
+            showToast('Failed to load product data', 'error');
+        });
+
+    // Show modal
+    const modal = document.getElementById('productModal');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.add('modal-enter');
+    }, 10);
+}
+
 function generateStarRating(rating) {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
@@ -419,5 +453,6 @@ function initializeProductManager() {
 window.loadProducts = loadProducts;
 window.renderProducts = renderProducts;
 window.createProductCard = createProductCard;
+window.showEditModal = showEditModal;
 window.deleteProduct = deleteProduct;
 window.initializeProductManager = initializeProductManager;

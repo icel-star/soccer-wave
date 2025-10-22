@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "giselle-julia-soccerwave.pbp.cs.ui.a
 
 CSRF_TRUSTED_ORIGINS = [
     "<https://giselle-julia-soccerwave.pbp.cs.ui.ac.id>",
+    "https://giselle-julia-soccerwave.pbp.cs.ui.ac.id",
 ]
 
 # Application definition

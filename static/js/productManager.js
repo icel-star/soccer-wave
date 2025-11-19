@@ -1,5 +1,3 @@
-// static/js/productManager.js
-
 // State Management Functions
 function showLoadingState() {
     console.log('Showing loading state');

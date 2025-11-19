@@ -200,7 +200,7 @@ Kekurangan:
 => Tidak, cookies tidak aman secara default dan memiliki beberapa risiko potensial:
     - Cross-Site Scripting (XSS) 
         Serangan dimana attacker menyuntikkan malicious script yang dapat mencuri cookies pengguna. Script ini berjalan dalam context website target dan dapat mengakses cookies yang tidak dilindungi HttpOnly flag.
-    - Cross-Site Request For gery (CSRF) 
+    - Cross-Site Request Forgery (CSRF) 
         Serangan dimana website jahat membuat pengguna yang sudah login mengirim request tidak sah ke website target. Attack ini memanfaatkan fakta bahwa cookies otomatis dikirim dengan setiap request ke domain.
     - Session Hijacking 
         Pencurian session ID dari cookies yang memungkinkan attacker mengambil alih session pengguna. Dapat terjadi melalui network sniffing, XSS, atau physical access ke device.

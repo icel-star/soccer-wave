@@ -3,13 +3,13 @@
 {% load static %}
 
 {% block meta %}
-<title>{{ product.name }} - Soccer Wave</title>
+{{ product.name }} - Soccer Wave
 {% endblock meta %}
 
 {% block content %}
 {% include 'navbar.html' %}
 
-<main class="min-h-screen bg-gradient-to-br from-white to-pink-100 pt-16">
+<main class="min-h-screen bg-gradient-to-br from-white to-pink-100 pt-16 pb-32 sm:pb-28">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
             <a href="{% url 'main:show_main' %}" class="hover:text-pink-500 transition-colors">Products</a>
@@ -96,25 +96,6 @@
                         <p class="text-gray-600 leading-relaxed whitespace-pre-line text-sm sm:text-base">{{ product.description }}</p>
                     </div>
 
-                    <div class="mt-auto">
-                        <div class="flex items-center gap-3 mb-3">
-                            <label for="quantity" class="text-sm font-semibold text-gray-700">Quantity</label>
-                            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                                <button type="button" onclick="changeQuantity(-1)" class="w-9 h-9 text-gray-500 hover:bg-pink-50 hover:text-pink-500" aria-label="Decrease quantity">−</button>
-                                <input id="quantity" type="number" value="1" min="1" max="{{ product.stock }}" class="w-10 h-9 text-center text-sm font-semibold border-x border-gray-200 focus:outline-none" aria-label="Quantity">
-                                <button type="button" onclick="changeQuantity(1)" class="w-9 h-9 text-gray-500 hover:bg-pink-50 hover:text-pink-500" aria-label="Increase quantity">+</button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button type="button" onclick="showToast('Added to cart', 'success', '{{ product.name|escapejs }} is ready in your cart.')" class="inline-flex items-center justify-center gap-2 bg-white border-2 border-pink-400 text-pink-500 hover:bg-pink-50 font-semibold py-3 rounded-lg transition-colors {% if not product.stock %}opacity-50 cursor-not-allowed{% endif %}" {% if not product.stock %}disabled{% endif %}>
-                                <i class="fas fa-shopping-bag"></i> Add to Cart
-                            </button>
-                            <button type="button" onclick="showToast('Coming soon', 'info', 'Checkout will be available in the next update.')" class="inline-flex items-center justify-center gap-2 bg-pink-400 hover:bg-pink-500 text-white font-semibold py-3 rounded-lg shadow-lg transition-colors {% if not product.stock %}opacity-50 cursor-not-allowed{% endif %}" {% if not product.stock %}disabled{% endif %}>
-                                Buy Now <i class="fas fa-arrow-right text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-
                     <div class="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100 text-sm text-gray-500">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-500 text-white flex items-center justify-center font-bold">
                             {% if product.user %}{{ product.user.username|first|upper }}{% else %}?{% endif %}
@@ -128,6 +109,27 @@
                 </div>
             </div>
         </section>
+    </div>
+
+    <div class="fixed bottom-4 sm:bottom-6 left-1/2 z-40 w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 rounded-2xl border border-pink-100 bg-white/95 p-3 shadow-2xl backdrop-blur sm:p-4" aria-label="Purchase actions">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div class="flex items-center justify-between gap-3 sm:mr-auto">
+                <label for="quantity" class="text-sm font-semibold text-gray-700">Quantity</label>
+                <div class="flex items-center overflow-hidden rounded-lg border border-gray-200">
+                    <button type="button" onclick="changeQuantity(-1)" class="h-9 w-9 text-gray-500 hover:bg-pink-50 hover:text-pink-500" aria-label="Decrease quantity">-</button>
+                    <input id="quantity" type="number" value="1" min="1" max="{{ product.stock }}" class="h-9 w-10 border-x border-gray-200 text-center text-sm font-semibold focus:outline-none" aria-label="Quantity">
+                    <button type="button" onclick="changeQuantity(1)" class="h-9 w-9 text-gray-500 hover:bg-pink-50 hover:text-pink-500" aria-label="Increase quantity">+</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 sm:min-w-[22rem]">
+                <button type="button" onclick="showToast('Added to cart', 'success', '{{ product.name|escapejs }} is ready in your cart.')" class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-pink-400 bg-white py-3 text-sm font-semibold text-pink-500 transition-colors hover:bg-pink-50 {% if not product.stock %}cursor-not-allowed opacity-50{% endif %}" {% if not product.stock %}disabled{% endif %}>
+                    <i class="fas fa-shopping-bag"></i> Add to Cart
+                </button>
+                <button type="button" onclick="showToast('Coming soon', 'info', 'Checkout will be available in the next update.')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-pink-400 py-3 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-pink-500 {% if not product.stock %}cursor-not-allowed opacity-50{% endif %}" {% if not product.stock %}disabled{% endif %}>
+                    Buy Now <i class="fas fa-arrow-right text-sm"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </main>
 

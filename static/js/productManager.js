@@ -4,6 +4,7 @@ function showLoadingState() {
     document.getElementById('loadingState').classList.remove('hidden');
     document.getElementById('errorState').classList.add('hidden');
     document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('noSearchResults').classList.add('hidden');
     document.getElementById('productGrid').classList.add('hidden');
 }
 
@@ -12,6 +13,7 @@ function showErrorState(message) {
     document.getElementById('loadingState').classList.add('hidden');
     document.getElementById('errorState').classList.remove('hidden');
     document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('noSearchResults').classList.add('hidden');
     document.getElementById('productGrid').classList.add('hidden');
     if (message) {
         document.getElementById('errorMessage').textContent = message;
@@ -23,6 +25,7 @@ function showEmptyState() {
     document.getElementById('loadingState').classList.add('hidden');
     document.getElementById('errorState').classList.add('hidden');
     document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('noSearchResults').classList.add('hidden');
     document.getElementById('productGrid').classList.add('hidden');
 }
 
@@ -31,6 +34,7 @@ function showProductGrid() {
     document.getElementById('loadingState').classList.add('hidden');
     document.getElementById('errorState').classList.add('hidden');
     document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('noSearchResults').classList.add('hidden');
     document.getElementById('productGrid').classList.remove('hidden');
 }
 
@@ -115,9 +119,29 @@ function renderProducts(products) {
         return;
     }
 
-    console.log(`Rendering ${products.length} products`);
+    const searchInput = document.getElementById('productSearch');
+    const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    const filteredProducts = productsArray.filter(productData => {
+        const product = productData.fields || productData;
+        const searchableText = [product.name, product.brand, product.category, product.description]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+        return searchableText.includes(searchTerm);
+    });
+
+    if (filteredProducts.length === 0) {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('errorState').classList.add('hidden');
+        document.getElementById('emptyState').classList.add('hidden');
+        document.getElementById('noSearchResults').classList.remove('hidden');
+        productGrid.classList.add('hidden');
+        return;
+    }
+
+    console.log(`Rendering ${filteredProducts.length} products`);
     
-    products.forEach(product => {
+    filteredProducts.forEach(product => {
         try {
             const productCard = createProductCard(product);
             productGrid.appendChild(productCard);
@@ -127,6 +151,26 @@ function renderProducts(products) {
     });
 
     showProductGrid();
+}
+
+function filterProducts() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const filter = urlParams.get('filter') || 'all';
+    const url = filter === 'my' ? '/get-product/?filter=my' : '/get-product/';
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => renderProducts(data))
+        .catch(error => console.error('Error filtering products:', error));
+}
+
+function clearProductSearch() {
+    const searchInput = document.getElementById('productSearch');
+    const clearButton = document.getElementById('clearProductSearch');
+    searchInput.value = '';
+    clearButton.classList.add('hidden');
+    filterProducts();
+    searchInput.focus();
 }
 
 function createProductCard(productData) {
@@ -450,6 +494,8 @@ function initializeProductManager() {
 // Make functions globally available
 window.loadProducts = loadProducts;
 window.renderProducts = renderProducts;
+window.filterProducts = filterProducts;
+window.clearProductSearch = clearProductSearch;
 window.createProductCard = createProductCard;
 window.showEditModal = showEditModal;
 window.deleteProduct = deleteProduct;
